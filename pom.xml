@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.1.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>uk.yetanother</groupId>
+    <artifactId>compact-device-adaptor-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Compact Device Adaptor Parent</name>
+    <description>Application to provide a RESTful interface to otherwise bespoke device interfaces.</description>
+    <properties>
+        <java.version>17</java.version>
+        <cda.version>0.0.1-SNAPSHOT</cda.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
+    </properties>
+
+    <modules>
+        <module>compact-device-adaptor</module>
+        <module>compact-device-adaptor-external</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>uk.yetanother</groupId>
+                <artifactId>compact-device-adaptor</artifactId>
+                <version>${cda.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.yetanother</groupId>
+                <artifactId>compact-device-adaptor-external</artifactId>
+                <version>${cda.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mapstruct</groupId>
+                <artifactId>mapstruct</artifactId>
+                <version>${org.mapstruct.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+</project>
