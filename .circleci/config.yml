@@ -12,3 +12,5 @@ workflows:
     jobs:
       - maven/test:
           executor: java
+      - store_test_results:
+          path: target/surefire-reports

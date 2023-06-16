@@ -2,8 +2,9 @@ package uk.yetanother.compact.device.adaptor.web.function;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.yetanother.compact.device.adaptor.business.function.FunctionController;
 
 import java.util.UUID;
@@ -11,7 +12,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-@SpringBootTest
+@ExtendWith(SpringExtension.class)
 class FunctionWebControllerTest {
 
     @Mock
