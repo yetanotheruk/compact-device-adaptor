@@ -1,0 +1,42 @@
+version: 2.1
+
+jobs:
+  java-build-test:
+    docker:
+      - image: cimg/openjdk:20.0.1
+    resource_class: small
+    working_directory: ~/repo
+    steps:
+      - checkout
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "pom.xml" }}
+            - v1-dependencies-
+
+      - run: mvn dependency:go-offline
+
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: v1-dependencies-{{ checksum "pom.xml" }}
+
+      # run tests
+      - run: mvn test
+
+      - run:
+          name: Save test results
+          command: |
+            mkdir -p ~/test-results/junit/
+            find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+          when: always
+      - store_test_results:
+          path: ~/test-results/junit
+      - store_artifacts:
+          path: ~/test-results/junit
+
+workflows:
+  build-test:
+    jobs:
+      - java-build-test
