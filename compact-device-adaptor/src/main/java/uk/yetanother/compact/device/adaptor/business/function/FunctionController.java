@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -61,6 +62,7 @@ public class FunctionController {
             } catch (InterruptedException | ExecutionException e) {
                 log.error(String.format("Unable to get run results of function %s.", id), e);
                 Thread.currentThread().interrupt(); // Restore interrupted state.
+                throw new ResponseStatusException(INTERNAL_SERVER_ERROR, String.format("Unable to fetch result for id %s.", id));
             }
 
         }
