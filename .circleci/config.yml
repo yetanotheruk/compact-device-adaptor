@@ -8,6 +8,7 @@ executors:
   java:
     docker:
       - image: cimg/openjdk:20.0.1
+    resource_class: small
 
 
 workflows:
