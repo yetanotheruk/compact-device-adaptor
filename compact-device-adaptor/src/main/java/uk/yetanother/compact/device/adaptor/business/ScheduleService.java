@@ -36,7 +36,8 @@ public class ScheduleService {
                 return; // If there is already a scheduled change at the same time skip adding another job.
             }
         } catch (SchedulerException e) {
-            log.error("Unable to look up Quartz Job by name.", e);
+            log.error(String.format("Unable to look up Quartz Job by name %s, skipping job creation.", changeDate), e);
+            return;
         }
 
         JobDetail job = newJob(ConfigurationPackChangeJob.class)
