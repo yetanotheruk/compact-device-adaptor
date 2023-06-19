@@ -26,9 +26,10 @@ public class ConfigurationPackCRUDController {
     private final ConfigurationPackMapper configurationPackMapper;
     private final ConfigurationPackRepository repository;
 
-    public ConfigurationPackDto handleNewPackReceived(ConfigurationPackDto configurationPack) {
-        configurationPackHandler.handleNewPackReceived(configurationPack);
-        return configurationPackMapper.toDto(save(configurationPackMapper.fromDto(configurationPack)));
+    public ConfigurationPack handleNewPackReceived(ConfigurationPack configurationPack) {
+        ConfigurationPackDto newPack = configurationPackMapper.toDto(configurationPack);
+        configurationPackHandler.handleNewPackReceived(newPack);
+        return save(configurationPackMapper.fromDto(newPack));
     }
 
     public void handlePackDeletion(UUID id) {

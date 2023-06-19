@@ -14,7 +14,7 @@ import java.util.concurrent.Callable;
 @Slf4j
 public class FunctionRunTask implements Callable<String> {
 
-    private final UUID uuid;
+    private final UUID id;
     private final String function;
     private final String attributes;
     private final FutureWrapper wrapper;
@@ -27,9 +27,11 @@ public class FunctionRunTask implements Callable<String> {
             String result = functionHandler.execute(function, attributes);
             log.trace(String.format("Finished task for function %s.", function));
             wrapper.setCompletedOn(LocalDateTime.now());
+            wrapper.setSuccess(true);
             return result;
         } catch (Exception e) {
             log.error(String.format("Error running task for function %s.", function), e);
+            wrapper.setCompletedOn(LocalDateTime.now());
             throw e;
         }
     }

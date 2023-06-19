@@ -11,6 +11,30 @@
     <artifactId>compact-device-adaptor-external</artifactId>
     <name>Compact Device Adaptor External</name>
     <description>Package containing Data Transfer Object's and Interfaces allowing application extensions.</description>
+    <url>http://www.yetanother.uk</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>ashleycbaker</id>
+            <name>Ashley Baker</name>
+            <email>ashley@yetanother.uk</email>
+            <organization>YetAnother</organization>
+            <organizationUrl>https://yetanother.uk</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <url>https://github.com/yetanotheruk/compact-device-adaptor.git</url>
+    </scm>
+    
     <properties>
         <java.version>17</java.version>
     </properties>

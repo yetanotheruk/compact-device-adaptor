@@ -21,7 +21,7 @@ public class ConfigurationPackCRUDWebController {
 
     @PostMapping(produces = "application/json")
     public ConfigurationPackDto createConfigurationPack(@RequestBody ConfigurationPackDto configurationPack) {
-        return configurationPackCRUDController.handleNewPackReceived(configurationPack);
+        return configurationPackMapper.toDto(configurationPackCRUDController.handleNewPackReceived(configurationPackMapper.fromDto(configurationPack)));
     }
 
     @GetMapping(produces = "application/json")
