@@ -9,7 +9,6 @@ import uk.yetanother.compact.device.adaptor.business.function.FunctionController
 
 import java.util.UUID;
 
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(SpringExtension.class)
@@ -28,7 +27,7 @@ class FunctionWebControllerTest {
     @Test
     void executeFunction() {
         classUnderTest.executeFunction("foo", "bar");
-        verify(functionController).execute(eq("foo"), eq("bar"));
+        verify(functionController).execute("foo", "bar");
     }
 
     @Test

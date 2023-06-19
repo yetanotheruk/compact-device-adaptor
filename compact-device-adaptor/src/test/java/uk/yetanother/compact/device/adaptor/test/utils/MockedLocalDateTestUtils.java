@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 
 import static java.time.ZoneOffset.UTC;
 
-public class MockedLocalDateUtils {
+public class MockedLocalDateTestUtils {
 
-    private MockedLocalDateUtils() {
+    private MockedLocalDateTestUtils() {
         // Removing public constructor
     }
 

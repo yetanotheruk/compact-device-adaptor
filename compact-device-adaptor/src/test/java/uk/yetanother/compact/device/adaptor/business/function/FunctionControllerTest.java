@@ -14,7 +14,7 @@ import uk.yetanother.compact.device.adaptor.domain.tasks.FunctionRunTask;
 import uk.yetanother.compact.device.adaptor.domain.tasks.FutureWrapper;
 import uk.yetanother.compact.device.adaptor.external.dto.FunctionRunResultDto;
 import uk.yetanother.compact.device.adaptor.external.services.fuction.IFunctionHandler;
-import uk.yetanother.compact.device.adaptor.test.utils.MockedLocalDateUtils;
+import uk.yetanother.compact.device.adaptor.test.utils.MockedLocalDateTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -53,7 +53,7 @@ class FunctionControllerTest {
     void execute() {
         LocalDateTime creationDate = LocalDateTime.now();
 
-        MockedLocalDateUtils.runWithCurrentDateTime(creationDate, () -> {
+        MockedLocalDateTestUtils.runWithCurrentDateTime(creationDate, () -> {
             classUnderTest.execute("function", "attributes");
         });
         verify(executor).submit(taskCaptor.capture());

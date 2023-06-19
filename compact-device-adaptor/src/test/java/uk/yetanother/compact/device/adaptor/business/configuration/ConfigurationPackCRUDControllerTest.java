@@ -11,7 +11,7 @@ import uk.yetanother.compact.device.adaptor.external.services.configuration.ICon
 import uk.yetanother.compact.device.adaptor.mapping.ConfigurationPackMapper;
 import uk.yetanother.compact.device.adaptor.mapping.ConfigurationPackMapperImpl;
 import uk.yetanother.compact.device.adaptor.repositories.ConfigurationPackRepository;
-import uk.yetanother.compact.device.adaptor.test.utils.MockedLocalDateUtils;
+import uk.yetanother.compact.device.adaptor.test.utils.MockedLocalDateTestUtils;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -79,7 +79,7 @@ class ConfigurationPackCRUDControllerTest {
     @Test
     void getExpiredConfigurationPacks() {
         LocalDateTime date = LocalDateTime.now();
-        MockedLocalDateUtils.runWithCurrentDateTime(date, () -> {
+        MockedLocalDateTestUtils.runWithCurrentDateTime(date, () -> {
             classUnderTest.getExpiredConfigurationPacks();
         });
         verify(repository).findAllByValidToIsBefore(date);
@@ -88,7 +88,7 @@ class ConfigurationPackCRUDControllerTest {
     @Test
     void getNonExpiredConfigurationPacks() {
         LocalDateTime date = LocalDateTime.now();
-        MockedLocalDateUtils.runWithCurrentDateTime(date, () -> {
+        MockedLocalDateTestUtils.runWithCurrentDateTime(date, () -> {
             classUnderTest.getExpiredConfigurationPacks();
         });
         verify(repository).findAllByValidToIsBefore(date);
