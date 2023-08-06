@@ -12,6 +12,7 @@ import org.springframework.web.server.ResponseStatusException;
 import uk.yetanother.compact.device.adaptor.business.ScheduleService;
 import uk.yetanother.compact.device.adaptor.domain.ConfigurationPack;
 import uk.yetanother.compact.device.adaptor.domain.tasks.ConfigurationChangeTask;
+import uk.yetanother.compact.device.adaptor.external.enums.ConfigurationChangeType;
 import uk.yetanother.compact.device.adaptor.external.services.configuration.IConfigurationPackHandler;
 import uk.yetanother.compact.device.adaptor.mapping.ConfigurationPackMapper;
 import uk.yetanother.compact.device.adaptor.mapping.ConfigurationPackMapperImpl;
@@ -25,8 +26,7 @@ import java.util.concurrent.ExecutorService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @ExtendWith(SpringExtension.class)
@@ -51,6 +51,9 @@ class ConfigurationPackActionControllerTest {
     private ArgumentCaptor<Set<LocalDateTime>> datesCaptor;
 
     @Captor
+    private ArgumentCaptor<ConfigurationChangeType> changeTypeCaptor;
+
+    @Captor
     private ArgumentCaptor<ConfigurationChangeTask> configurationChangeTaskCaptor;
 
     private ConfigurationPackActionController classUnderTest;
@@ -66,21 +69,30 @@ class ConfigurationPackActionControllerTest {
         LocalDateTime baseDate = LocalDateTime.now();
         ConfigurationPack pack1 = ConfigurationPackTestUtils.createTestPack();
         pack1.setValidFrom(baseDate.plusHours(1));
+        pack1.setValidTo(baseDate.plusHours(2));
 
         ConfigurationPack pack2 = ConfigurationPackTestUtils.createTestPack();
         pack2.setValidFrom(baseDate.plusHours(2));
+        pack2.setValidTo(baseDate.plusHours(5));
 
         ConfigurationPack pack3 = ConfigurationPackTestUtils.createTestPack();
         pack3.setValidFrom(baseDate.plusHours(1));
+        pack3.setValidTo(baseDate.plusHours(5));
 
         when(configurationPackCRUDController.getNonExpiredConfigurationPacks()).thenReturn(Arrays.asList(pack1, pack2, pack3));
         classUnderTest.buildSchedule();
-        verify(scheduleService).scheduleConfigurationPackChanges(datesCaptor.capture());
+        verify(scheduleService, times(2)).scheduleConfigurationPackChanges(datesCaptor.capture(), changeTypeCaptor.capture());
 
-        Set<LocalDateTime> dateResults = datesCaptor.getValue();
+        Set<LocalDateTime> dateResults = datesCaptor.getAllValues().get(0);
+        assertEquals(ConfigurationChangeType.START, changeTypeCaptor.getAllValues().get(0));
         assertEquals(2, dateResults.size());
         assertTrue(dateResults.contains(pack1.getValidFrom()));
         assertTrue(dateResults.contains(pack2.getValidFrom()));
+
+        dateResults = datesCaptor.getAllValues().get(1);
+        assertEquals(ConfigurationChangeType.STOP, changeTypeCaptor.getAllValues().get(1));
+        assertEquals(1, dateResults.size());
+        assertTrue(dateResults.contains(pack3.getValidTo()));
     }
 
     @Test
@@ -92,7 +104,7 @@ class ConfigurationPackActionControllerTest {
         ConfigurationPack pack2 = ConfigurationPackTestUtils.createTestPack();
         pack2.setValidFrom(baseDate.plusHours(2));
 
-        classUnderTest.scheduledChange(Arrays.asList(pack1, pack2));
+        classUnderTest.scheduledChange(Arrays.asList(pack1, pack2), ConfigurationChangeType.START);
         verify(executor).submit(configurationChangeTaskCaptor.capture());
 
         ConfigurationChangeTask result = configurationChangeTaskCaptor.getValue();
@@ -108,7 +120,7 @@ class ConfigurationPackActionControllerTest {
     void unScheduledChange() {
         ConfigurationPack pack1 = ConfigurationPackTestUtils.createTestPack();
         when(configurationPackCRUDController.getById(pack1.getId())).thenReturn(pack1);
-        classUnderTest.unScheduledChange(pack1.getId());
+        classUnderTest.unScheduledChange(pack1.getId(), ConfigurationChangeType.START);
         verify(executor).submit(configurationChangeTaskCaptor.capture());
 
         ConfigurationChangeTask result = configurationChangeTaskCaptor.getValue();
@@ -124,7 +136,7 @@ class ConfigurationPackActionControllerTest {
 
         UUID id = UUID.randomUUID();
         ResponseStatusException exception = assertThrows(ResponseStatusException.class, () -> {
-            classUnderTest.unScheduledChange(id);
+            classUnderTest.unScheduledChange(id, ConfigurationChangeType.START);
         });
 
         assertEquals(BAD_REQUEST, exception.getStatusCode());

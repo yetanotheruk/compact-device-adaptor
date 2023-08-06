@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.*;
 import org.springframework.stereotype.Service;
 import uk.yetanother.compact.device.adaptor.domain.jobs.ConfigurationPackChangeJob;
+import uk.yetanother.compact.device.adaptor.external.enums.ConfigurationChangeType;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -13,7 +14,7 @@ import java.util.Set;
 
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
-import static uk.yetanother.compact.device.adaptor.domain.jobs.ConfigurationPackChangeJob.JOB_GROUP_NAME;
+import static uk.yetanother.compact.device.adaptor.domain.jobs.ConfigurationPackChangeJob.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,15 +23,15 @@ public class ScheduleService {
 
     private final Scheduler scheduler;
 
-    public void scheduleConfigurationPackChanges(Set<LocalDateTime> changeDates) {
+    public void scheduleConfigurationPackChanges(Set<LocalDateTime> changeDates, ConfigurationChangeType changeType) {
         if (changeDates != null) {
             for (LocalDateTime changeDate : changeDates) {
-                scheduleConfigurationPackChange(changeDate);
+                scheduleConfigurationPackChange(changeDate, changeType);
             }
         }
     }
 
-    public void scheduleConfigurationPackChange(LocalDateTime changeDate) {
+    public void scheduleConfigurationPackChange(LocalDateTime changeDate, ConfigurationChangeType type) {
         try {
             if (scheduler.checkExists(new JobKey(changeDate.toString(), JOB_GROUP_NAME))) {
                 return; // If there is already a scheduled change at the same time skip adding another job.
@@ -42,7 +43,8 @@ public class ScheduleService {
 
         JobDetail job = newJob(ConfigurationPackChangeJob.class)
                 .withIdentity(changeDate.toString(), JOB_GROUP_NAME)
-                .usingJobData("date", changeDate.toString())
+                .usingJobData(DATE_DATA_MAP_KEY, changeDate.toString())
+                .usingJobData(TYPE_DATA_MAP_KEY, type.name())
                 .build();
 
         Trigger trigger = newTrigger()

@@ -1,0 +1,4 @@
+ignore:
+  - "**/mapping/**/*Mapper.java" # Ignore MapStruct Interfaces
+  - "**/mapping/**/*MapperImpl.java" # Ignore MapStruct Impls
+  - "compact-device-adaptor/src/main/java/uk/yetanother/compact/device/adaptor/CompactDeviceAdaptorApplication.java" # Ignore Spring Boot Main
