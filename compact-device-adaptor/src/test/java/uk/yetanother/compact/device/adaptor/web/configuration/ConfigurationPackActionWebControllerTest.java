@@ -6,6 +6,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.yetanother.compact.device.adaptor.business.configuration.ConfigurationPackActionController;
+import uk.yetanother.compact.device.adaptor.external.enums.ConfigurationChangeType;
 
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ class ConfigurationPackActionWebControllerTest {
     @Test
     void configurationChange() {
         UUID id = UUID.randomUUID();
-        classUnderTest.configurationChange(id);
-        verify(configurationPackActionController).unScheduledChange(id);
+        classUnderTest.configurationChange(id, ConfigurationChangeType.START.name());
+        verify(configurationPackActionController).unScheduledChange(id, ConfigurationChangeType.START);
     }
 }

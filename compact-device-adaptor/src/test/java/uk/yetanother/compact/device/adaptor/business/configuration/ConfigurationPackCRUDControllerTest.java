@@ -4,9 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.yetanother.compact.device.adaptor.business.ScheduleService;
 import uk.yetanother.compact.device.adaptor.domain.ConfigurationPack;
+import uk.yetanother.compact.device.adaptor.external.enums.ConfigurationChangeType;
 import uk.yetanother.compact.device.adaptor.external.services.configuration.IConfigurationPackHandler;
 import uk.yetanother.compact.device.adaptor.mapping.ConfigurationPackMapper;
 import uk.yetanother.compact.device.adaptor.mapping.ConfigurationPackMapperImpl;
@@ -17,8 +21,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static uk.yetanother.compact.device.adaptor.test.utils.ConfigurationPackTestUtils.createTestPack;
 
 @ExtendWith(SpringExtension.class)
@@ -31,19 +35,31 @@ class ConfigurationPackCRUDControllerTest {
 
     @Mock
     private ConfigurationPackRepository repository;
+
+    @Mock
+    private ScheduleService scheduleService;
+
     private ConfigurationPackCRUDController classUnderTest;
 
     @BeforeEach
     void setUp() {
-        classUnderTest = new ConfigurationPackCRUDController(configurationPackHandler, configurationPackMapper, repository);
+        classUnderTest = new ConfigurationPackCRUDController(configurationPackHandler, configurationPackMapper, repository, scheduleService);
     }
 
     @Test
     void handleNewPackReceived() {
         ConfigurationPack pack = createTestPack();
+        when(repository.save(any())).thenReturn(pack);
         classUnderTest.handleNewPackReceived(pack);
         verify(configurationPackHandler).handleNewPackReceived(configurationPackMapper.toDto(pack));
         verify(repository).save(pack);
+        verify(scheduleService).scheduleConfigurationPackChange(pack.getValidFrom(), ConfigurationChangeType.START);
+
+        // Also verify schedule service is not told about activations in the past.
+        Mockito.clearInvocations(scheduleService);
+        pack.setValidFrom(LocalDateTime.now().minusHours(1));
+        classUnderTest.handleNewPackReceived(pack);
+        verify(scheduleService, never()).scheduleConfigurationPackChange(any(), any());
     }
 
     @Test
@@ -121,5 +137,15 @@ class ConfigurationPackCRUDControllerTest {
         UUID id = UUID.randomUUID();
         classUnderTest.delete(id);
         verify(repository).deleteById(id);
+    }
+
+    @Test
+    void testGetNonExpiredConfigurationPacks() {
+        LocalDateTime fixedDate = LocalDateTime.now();
+        try (MockedStatic<LocalDateTime> mockedStatic = mockStatic(LocalDateTime.class)) {
+            mockedStatic.when(LocalDateTime::now).thenReturn(fixedDate);
+            classUnderTest.getNonExpiredConfigurationPacks();
+            verify(repository).findAllByValidToIsAfter(fixedDate);
+        }
     }
 }

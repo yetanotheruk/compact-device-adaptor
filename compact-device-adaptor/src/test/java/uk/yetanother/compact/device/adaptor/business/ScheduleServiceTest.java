@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.quartz.*;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.yetanother.compact.device.adaptor.domain.jobs.ConfigurationPackChangeJob;
+import uk.yetanother.compact.device.adaptor.external.enums.ConfigurationChangeType;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -49,7 +50,7 @@ class ScheduleServiceTest {
     void scheduleConfigurationPackChanges() {
         LocalDateTime job1 = LocalDateTime.now().plusDays(1);
         LocalDateTime job2 = LocalDateTime.now().plusDays(2);
-        classUnderTest.scheduleConfigurationPackChanges(new HashSet<>(Arrays.asList(job1, job2)));
+        classUnderTest.scheduleConfigurationPackChanges(new HashSet<>(Arrays.asList(job1, job2)), ConfigurationChangeType.START);
         verify(scheduler, times(2)).scheduleJob(jobDetailCaptor.capture(), triggerCaptor.capture());
 
         List<JobDetail> jobDetails = jobDetailCaptor.getAllValues();
@@ -93,7 +94,7 @@ class ScheduleServiceTest {
 
         when(scheduler.checkExists(any(JobKey.class))).thenReturn(false);
         LocalDateTime date = LocalDateTime.now();
-        classUnderTest.scheduleConfigurationPackChange(date);
+        classUnderTest.scheduleConfigurationPackChange(date, ConfigurationChangeType.START);
         verify(scheduler).scheduleJob(jobDetailCaptor.capture(), triggerCaptor.capture());
 
         JobDetail jobDetail = jobDetailCaptor.getValue();
@@ -109,7 +110,7 @@ class ScheduleServiceTest {
     @Test
     void scheduleConfigurationPackChangeFails() {
         when(scheduler.checkExists(any(JobKey.class))).thenThrow(SchedulerException.class);
-        classUnderTest.scheduleConfigurationPackChange(LocalDateTime.now());
+        classUnderTest.scheduleConfigurationPackChange(LocalDateTime.now(), ConfigurationChangeType.START);
         verify(scheduler, never()).scheduleJob(any(), any());
     }
 

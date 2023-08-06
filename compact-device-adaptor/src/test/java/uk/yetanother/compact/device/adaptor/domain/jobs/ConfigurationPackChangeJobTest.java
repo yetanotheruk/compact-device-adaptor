@@ -13,6 +13,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.yetanother.compact.device.adaptor.business.configuration.ConfigurationPackActionController;
 import uk.yetanother.compact.device.adaptor.business.configuration.ConfigurationPackCRUDController;
 import uk.yetanother.compact.device.adaptor.domain.ConfigurationPack;
+import uk.yetanother.compact.device.adaptor.external.enums.ConfigurationChangeType;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -48,18 +49,24 @@ class ConfigurationPackChangeJobTest {
         List<ConfigurationPack> packs = new ArrayList<>(List.of(new ConfigurationPack()));
         JobDetailImpl jobDetail = new JobDetailImpl();
         jobDetail.setJobDataMap(new JobDataMap());
-        jobDetail.getJobDataMap().put("date", date.toString());
+        jobDetail.getJobDataMap().put(ConfigurationPackChangeJob.DATE_DATA_MAP_KEY, date.toString());
+        jobDetail.getJobDataMap().put(ConfigurationPackChangeJob.TYPE_DATA_MAP_KEY, ConfigurationChangeType.START);
+
 
         when(jobExecutionContext.getJobDetail()).thenReturn(jobDetail);
         when(configurationPackCRUDController.getConfigurationPacksValidOnDate(date)).thenReturn(new ArrayList<>());
         classUnderTest.executeInternal(jobExecutionContext);
-        verify(configurationPackActionController, never()).scheduledChange(any());
+        verify(configurationPackActionController, never()).scheduledChange(any(), any());
+
+        when(configurationPackCRUDController.getConfigurationPacksValidOnDate(date)).thenReturn(null);
+        classUnderTest.executeInternal(jobExecutionContext);
+        verify(configurationPackActionController, never()).scheduledChange(any(), any());
 
 
         Mockito.clearInvocations(configurationPackCRUDController);
         when(configurationPackCRUDController.getConfigurationPacksValidOnDate(date)).thenReturn(packs);
         classUnderTest.executeInternal(jobExecutionContext);
         verify(configurationPackCRUDController).getConfigurationPacksValidOnDate(date);
-        verify(configurationPackActionController).scheduledChange(packs);
+        verify(configurationPackActionController).scheduledChange(packs, ConfigurationChangeType.START);
     }
 }

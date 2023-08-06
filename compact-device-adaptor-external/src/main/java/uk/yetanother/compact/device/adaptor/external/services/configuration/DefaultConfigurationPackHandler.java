@@ -3,6 +3,7 @@ package uk.yetanother.compact.device.adaptor.external.services.configuration;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.yetanother.compact.device.adaptor.external.dto.ConfigurationPackDto;
+import uk.yetanother.compact.device.adaptor.external.enums.ConfigurationChangeType;
 
 import java.util.List;
 
@@ -20,17 +21,13 @@ public class DefaultConfigurationPackHandler implements IConfigurationPackHandle
     }
 
     @Override
-    public void scheduledChange(List<ConfigurationPackDto> configurationPacks) {
+    public void scheduledChange(List<ConfigurationPackDto> configurationPacks, ConfigurationChangeType changeType) {
         log.info("Informed of scheduled change.");
     }
 
     @Override
-    public void unScheduledChange(ConfigurationPackDto configurationPack) {
+    public void unScheduledChange(ConfigurationPackDto configurationPack, ConfigurationChangeType changeType) {
         log.info("Informed of unScheduled change.");
     }
 
-    @Override
-    public void scheduleCompleted() {
-        log.info("Informed of scheduled completed.");
-    }
 }

@@ -9,6 +9,7 @@
         <relativePath>../pom.xml</relativePath> <!-- lookup parent from repository -->
     </parent>
     <artifactId>compact-device-adaptor</artifactId>
+    <packaging>jar</packaging>
     <name>Compact Device Adaptor</name>
     <description>Application to provide a RESTful interface to otherwise bespoke device interfaces.</description>
     <url>http://www.yetanother.uk</url>
@@ -34,7 +35,7 @@
     <scm>
         <url>https://github.com/yetanotheruk/compact-device-adaptor.git</url>
     </scm>
-    
+
     <dependencies>
         <dependency>
             <groupId>uk.yetanother</groupId>
@@ -114,6 +115,24 @@
                         </path>
                     </annotationProcessorPaths>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>exec</classifier>
+                            <mainClass>
+                                uk.yetanother.compact.device.adaptor.CompactDeviceAdaptorApplication
+                            </mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
