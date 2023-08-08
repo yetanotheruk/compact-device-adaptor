@@ -1,0 +1,17 @@
+<web-app>
+
+    <context-param>
+        <param-name>primefaces.THEME</param-name>
+        <param-value>Vela</param-value>
+    </context-param>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+    <context-param>
+        <param-name>primefaces.CLIENT_SIDE_VALIDATION</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+</web-app>

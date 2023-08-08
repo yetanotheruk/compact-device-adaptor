@@ -50,6 +50,7 @@
     <modules>
         <module>compact-device-adaptor</module>
         <module>compact-device-adaptor-external</module>
+        <module>examples</module>
     </modules>
 
     <dependencyManagement>

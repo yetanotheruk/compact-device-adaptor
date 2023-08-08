@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>uk.yetanother.cda.examples</groupId>
+        <artifactId>compact-device-adaptor-examples</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>modem-jsf-ui</artifactId>
+    <packaging>jar</packaging>
+
+    <properties>
+        <joinfaces.version>5.1.0</joinfaces.version>
+        <maven-model.version>3.9.2</maven-model.version>
+        <maven.compiler.source>19</maven.compiler.source>
+        <maven.compiler.target>19</maven.compiler.target>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.joinfaces</groupId>
+                <artifactId>joinfaces-dependencies</artifactId>
+                <version>${joinfaces.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model</artifactId>
+                <version>${maven-model.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>uk.yetanother.cda.examples</groupId>
+            <artifactId>modem-compact-device-adaptor</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>jsf-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>primefaces-spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars.npm</groupId>
+            <artifactId>primeflex</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>dev.failsafe</groupId>
+            <artifactId>failsafe</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.servlet.jsp.jstl</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.joinfaces</groupId>
+                    <artifactId>joinfaces-maven-plugin</artifactId>
+                    <version>${joinfaces.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>classpath-scan</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.joinfaces</groupId>
+                <artifactId>joinfaces-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
